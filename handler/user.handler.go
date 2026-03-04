@@ -1,13 +1,14 @@
 package handler
 
 import (
-	"github.com/go-playground/validator/v10"
-	"github.com/gofiber/fiber/v2"
 	"go-fiber-gorm/database"
 	"go-fiber-gorm/model/entity"
 	"go-fiber-gorm/model/request"
 	"go-fiber-gorm/utils"
 	"log"
+
+	"github.com/go-playground/validator/v10"
+	"github.com/gofiber/fiber/v2"
 )
 
 func UserHandlerGetAll(ctx *fiber.Ctx) error {
@@ -40,10 +41,9 @@ func UserHandlerCreate(ctx *fiber.Ctx) error {
 	}
 
 	newUser := entity.User{
-		Name:    user.Name,
-		Email:   user.Email,
-		Address: user.Address,
-		Phone:   user.Phone,
+		FullName: user.FullName,
+		Email:    user.Email,
+		RoleID:   user.RoleID,
 	}
 
 	hashedPassword, err := utils.HashingPassword(user.Password)
@@ -73,18 +73,7 @@ func UserHandlerGetById(ctx *fiber.Ctx) error {
 		return ctx.Status(404).JSON(fiber.Map{"message": "user not found"})
 	}
 
-	//userResponse := response.UserResponse{
-	//	ID:        user.ID,
-	//	Email:     user.Email,
-	//	Name:      user.Name,
-	//	Address:   user.Address,
-	//	Phone:     user.Phone,
-	//	CreatedAt: user.CreatedAt,
-	//	UpdatedAt: user.UpdatedAt,
-	//}
-
 	return ctx.JSON(fiber.Map{"data": user, "message": "success"})
-
 }
 
 func UserHandlerUpdate(ctx *fiber.Ctx) error {
@@ -109,9 +98,8 @@ func UserHandlerUpdate(ctx *fiber.Ctx) error {
 		return ctx.Status(404).JSON(fiber.Map{"message": "user not found"})
 	}
 
-	user.Name = userRequest.Name
-	user.Address = userRequest.Address
-	user.Phone = userRequest.Phone
+	user.FullName = userRequest.FullName
+	user.IsActive = userRequest.IsActive
 
 	errUpdate := database.DB.Save(&user).Error
 	if errUpdate != nil {

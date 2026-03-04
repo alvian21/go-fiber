@@ -4,19 +4,22 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestPhotoEntity(t *testing.T) {
+	id := uuid.New()
+	categoryId := uuid.New()
 	photo := Photo{
-		ID:         1,
+		ID:         id,
 		Image:      "test_photo.jpg",
-		CategoryID: 10,
+		CategoryID: categoryId,
 	}
 
-	assert.Equal(t, uint(1), photo.ID)
+	assert.Equal(t, id, photo.ID)
 	assert.Equal(t, "test_photo.jpg", photo.Image)
-	assert.Equal(t, uint(10), photo.CategoryID)
+	assert.Equal(t, categoryId, photo.CategoryID)
 
 	data, err := json.Marshal(photo)
 	assert.NoError(t, err)
@@ -26,5 +29,5 @@ func TestPhotoEntity(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.Equal(t, "test_photo.jpg", photoMap["image"])
-	assert.Equal(t, float64(10), photoMap["category_id"])
+	assert.Equal(t, categoryId.String(), photoMap["category_id"])
 }

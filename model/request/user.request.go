@@ -1,17 +1,17 @@
 package request
 
+import "github.com/google/uuid"
+
 type UserCreateRequest struct {
-	Name     string `json:"name" validate:"required"`
-	Email    string `json:"email" validate:"required,email"`
-	Address  string `json:"address"`
-	Phone    string `json:"phone"`
-	Password string `json:"password" validate:"required,min=6"`
+	FullName string     `json:"full_name" validate:"required"`
+	Email    string     `json:"email" validate:"required,email"`
+	Password string     `json:"password" validate:"required,min=6"`
+	RoleID   *uuid.UUID `json:"role_id"`
 }
 
 type UserUpdateRequest struct {
-	Name    string `json:"name" validate:"required"`
-	Address string `json:"address"`
-	Phone   string `json:"phone"`
+	FullName string `json:"full_name" validate:"required"`
+	IsActive bool   `json:"is_active"`
 }
 
 type UserEmailRequest struct {

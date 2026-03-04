@@ -22,11 +22,12 @@ func RouteInit(r *fiber.App) {
 
 	r.Post("/login", handler.LoginHandler)
 
-	r.Get("/user", middleware.Auth, handler.UserHandlerGetAll)
-	r.Get("/user/:id", handler.UserHandlerGetById)
-	r.Post("/user", handler.UserHandlerCreate)
-	r.Put("/user/:id", handler.UserHandlerUpdate)
-	r.Delete("/user/:id", handler.UserHandlerDelete)
+	user := r.Group("/user", middleware.Auth)
+	user.Get("/", handler.UserHandlerGetAll)
+	user.Get("/:id", handler.UserHandlerGetById)
+	user.Post("/", handler.UserHandlerCreate)
+	user.Put("/:id", handler.UserHandlerUpdate)
+	user.Delete("/:id", handler.UserHandlerDelete)
 
 	r.Post("/book", utils.HandleSingleFile, handler.BookHandlerCreate)
 

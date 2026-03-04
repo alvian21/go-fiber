@@ -1,12 +1,14 @@
 package entity
 
 import (
-	"gorm.io/gorm"
 	"time"
+
+	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type Book struct {
-	ID        uint           `json:"id" gorm:"primary_key"`
+	ID        uuid.UUID      `json:"id" gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
 	Title     string         `json:"title"`
 	Author    string         `json:"author"`
 	Cover     string         `json:"cover"`

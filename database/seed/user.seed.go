@@ -11,20 +11,26 @@ import (
 func UserSeed(db *gorm.DB) {
 	password, _ := utils.HashingPassword("password123")
 
+	var adminRole entity.Role
+	db.Where("alias = ?", "admin").First(&adminRole)
+
+	var userRole entity.Role
+	db.Where("alias = ?", "user").First(&userRole)
+
 	users := []entity.User{
 		{
-			Name:     "Admin User",
+			FullName: "Admin User",
 			Email:    "admin@example.com",
 			Password: password,
-			Address:  "Jl. Admin No. 1",
-			Phone:    "081234567890",
+			IsActive: true,
+			RoleID:   &adminRole.ID,
 		},
 		{
-			Name:     "John Doe",
+			FullName: "John Doe",
 			Email:    "john@example.com",
 			Password: password,
-			Address:  "Jl. John No. 2",
-			Phone:    "081234567891",
+			IsActive: true,
+			RoleID:   &userRole.ID,
 		},
 	}
 

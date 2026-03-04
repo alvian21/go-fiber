@@ -1,13 +1,17 @@
 package response
 
-import "time"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type UserResponse struct {
-	ID        uint      `json:"id" gorm:"primary_key"`
-	Name      string    `json:"name"`
-	Email     string    `json:"email"`
-	Address   string    `json:"address"`
-	Phone     string    `json:"phone"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID        uuid.UUID  `json:"id"`
+	FullName  string     `json:"full_name"`
+	Email     string     `json:"email"`
+	IsActive  bool       `json:"is_active"`
+	RoleID    *uuid.UUID `json:"role_id"`
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedAt time.Time  `json:"updated_at"`
 }

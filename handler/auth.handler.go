@@ -1,15 +1,16 @@
 package handler
 
 import (
-	"github.com/go-playground/validator/v10"
-	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt/v5"
 	"go-fiber-gorm/database"
 	"go-fiber-gorm/model/entity"
 	"go-fiber-gorm/model/request"
 	"go-fiber-gorm/utils"
 	"log"
 	"time"
+
+	"github.com/go-playground/validator/v10"
+	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 func LoginHandler(ctx *fiber.Ctx) error {
@@ -28,7 +29,7 @@ func LoginHandler(ctx *fiber.Ctx) error {
 
 	// ChECK AVAILABLE User
 	var user entity.User
-	err := database.DB.First(&user, "email = ? ", loginRequest.Email).Error
+	err := database.DB.Preload("Role").First(&user, "email = ? ", loginRequest.Email).Error
 	if err != nil {
 		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"message": "wrong credential"})
 	}
@@ -41,16 +42,12 @@ func LoginHandler(ctx *fiber.Ctx) error {
 
 	// GENERATE JWT
 	claims := jwt.MapClaims{}
-	claims["name"] = user.Name
+	claims["full_name"] = user.FullName
 	claims["email"] = user.Email
-	claims["address"] = user.Address
-	claims["exp"] = time.Now().Add(time.Minute * 2).Unix()
-
-	if user.Email == "admin@gmail.com" {
-		claims["role"] = "admin"
-	} else {
-		claims["role"] = "user"
+	if user.Role != nil {
+		claims["role"] = user.Role.Alias
 	}
+	claims["exp"] = time.Now().Add(time.Minute * 2).Unix()
 
 	token, errGenerateToken := utils.GenerateToken(&claims)
 	if errGenerateToken != nil {

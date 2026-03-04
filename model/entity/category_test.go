@@ -4,19 +4,22 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestCategoryEntity(t *testing.T) {
+	id := uuid.New()
+	photoId := uuid.New()
 	category := Category{
-		ID:   1,
+		ID:   id,
 		Name: "Test Category",
 		Photos: []Photo{
-			{ID: 1, Image: "photo1.jpg"},
+			{ID: photoId, Image: "photo1.jpg"},
 		},
 	}
 
-	assert.Equal(t, uint(1), category.ID)
+	assert.Equal(t, id, category.ID)
 	assert.Equal(t, "Test Category", category.Name)
 	assert.Len(t, category.Photos, 1)
 

@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -20,7 +21,7 @@ func GenerateToken(claims *jwt.MapClaims) (string, error) {
 func VerifyToken(tokenString string) (*jwt.Token, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, isValid := token.Method.(*jwt.SigningMethodHMAC); !isValid {
-			return nil, fmt.Errorf("invalid token", token.Header["alg"])
+			return nil, fmt.Errorf("invalid token: %v", token.Header["alg"])
 		}
 		return []byte(SECRET_KEY), nil
 	})
