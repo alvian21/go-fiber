@@ -1,35 +1,31 @@
 package migration
 
 import (
+	"embed"
 	"fmt"
+	"go-fiber-gorm/database"
 	"log"
-	"os"
 
-	"github.com/golang-migrate/migrate/v4"
-	_ "github.com/golang-migrate/migrate/v4/database/postgres"
-	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/pressly/goose/v3"
+	_ "github.com/pressly/goose/v3/database"
 )
 
+//go:embed sql/*.sql
+var embedMigrations embed.FS
+
 func RunMigration() {
-	dbUser := os.Getenv("DB_USER")
-	dbPassword := os.Getenv("DB_PASSWORD")
-	dbHost := os.Getenv("DB_HOST")
-	dbPort := os.Getenv("DB_PORT")
-	dbName := os.Getenv("DB_NAME")
-
-	dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
-		dbUser, dbPassword, dbHost, dbPort, dbName,
-	)
-
-	m, err := migrate.New(
-		"file://database/migration/sql",
-		dsn,
-	)
+	sqlDB, err := database.DB.DB()
 	if err != nil {
-		log.Fatalf("Could not create migrate instance: %v", err)
+		log.Fatalf("Could not get sql.DB from gorm: %v", err)
 	}
 
-	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+	goose.SetBaseFS(embedMigrations)
+
+	if err := goose.SetDialect("postgres"); err != nil {
+		log.Fatalf("Could not set goose dialect: %v", err)
+	}
+
+	if err := goose.Up(sqlDB, "sql"); err != nil {
 		log.Fatalf("Could not run up migrations: %v", err)
 	}
 

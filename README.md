@@ -7,7 +7,7 @@ A robust RESTful API boilerplate built with Go, Fiber, GORM, and PostgreSQL. Fea
 - **Framework**: [Fiber v2](https://gofiber.io/) - Fast and low memory footprint.
 - **ORM**: [GORM](https://gorm.io/) - Developer-friendly ORM for Go.
 - **Database**: PostgreSQL.
-- **Migrations**: [golang-migrate](https://github.com/golang-migrate/migrate) - Versioned SQL migrations.
+- **Migrations**: [Goose](https://github.com/pressly/goose) - Single-file SQL migrations.
 - **Seeding**: Custom integrated seeder for initial data (e.g., admin users).
 - **Testing**: Unit tests for models/entities using `testify`.
 - **JWT**: Pre-configured JWT middleware for authentication.
@@ -85,10 +85,24 @@ go test -v ./model/entity/...
 
 ## 📝 Creating New Migrations
 
-If you have `migrate` CLI installed:
+You can use the provided command to create new migration files easily:
 
 ```bash
-migrate create -ext sql -dir database/migration/sql -seq your_migration_name
+make migrate-make name=your_migration_name
 ```
 
-Alternatively, manually create `.up.sql` and `.down.sql` files in `database/migration/sql/` following the existing numbering.
+Alternatively, using Go directly:
+
+```bash
+go run cmd/migration/main.go your_migration_name
+```
+
+These commands will automatically generate the next sequence number and create a single `.sql` file in `database/migration/sql/` containing both **Up** and **Down** sections (using Goose markers).
+
+### Manual Migration CLI (Optional)
+
+If you have `goose` CLI installed, you can also use:
+
+```bash
+goose -dir database/migration/sql create your_migration_name sql
+```
